@@ -1,7 +1,9 @@
 module miniALU_top (
 	// TODO: define your input and output ports
 	input [9:0] in,
-	output [9:0] out
+	output [7:0] displayBits [0:5]
 );
-    assign out = in;
+	wire [19:0] result;
+	miniALU ALU(in[9:6], in[5:2], in[1], in[0], result);
+	displayEncoder disp(result, displayBits);
 endmodule
