@@ -1,17 +1,22 @@
 `timescale 1ns / 1ns
-module miniALU_tb;
+module miniALU_top_tb;
 	reg [9:0] switches;
-	wire [9:0] leds;
+	wire [7:0] displayBits [0:5];
 
-	miniALU_top DUT(switches, leds);
+	miniALU_top DUT(switches, displayBits);
 
 	initial begin
-		switches = 10'b0000000000; #10
-		switches = 10'b1111111111; #10;
+		switches = 10'b1100001100; #10; // 12 + 3
+		switches = 10'b1100001101; #10; // 12 - 3
+		switches = 10'b1100001110; #10; // 12 << 3
+		switches = 10'b1100001111; #10; // 12 >> 3
 	end
 
 	initial begin
 		$dumpfile("dump.vcd");
-		$dumpvars();
+		for (integer i=0; i<6; i=i+1) begin
+			$dumpvars(0, displayBits[i]);
+		end
+		$dumpvars(0, switches);
 	end
 endmodule
