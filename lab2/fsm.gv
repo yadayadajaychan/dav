@@ -1,0 +1,12 @@
+strict digraph fsm {
+	SET -> SET [label="reset"]
+	SET -> RUN [label="start/stop"]
+	RUN -> STOP [label="start/stop"]
+	RUN -> SET [label="reset"]
+	STOP -> WIN [label="match"]
+	STOP -> SET [label="reset"]
+	STOP -> RUN [label="start/stop"]
+	STOP -> SET [label="reset"]
+	WIN -> RUN [label="start/stop"]
+	WIN -> SET [label="reset"]
+}
