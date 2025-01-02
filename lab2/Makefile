@@ -1,3 +1,9 @@
+.PHONY: bin_to_bcd
+bin_to_bcd:
+	iverilog bin_to_bcd*.sv
+	./a.out
+	gtkwave dump.vcd
+
 .PHONY: lfsr
 lfsr:
 	iverilog lfsr*.sv
