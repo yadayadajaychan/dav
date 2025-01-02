@@ -1,3 +1,9 @@
+.PHONY: seven_seg_encoder
+seven_seg_encoder:
+	iverilog seven_seg_encoder*.sv
+	./a.out
+	gtkwave dump.vcd
+
 .PHONY: bin_to_bcd
 bin_to_bcd:
 	iverilog bin_to_bcd*.sv
