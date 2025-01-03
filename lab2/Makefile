@@ -1,3 +1,9 @@
+.PHONY: four_bit_mux
+four_bit_mux:
+	iverilog four_bit_mux*.sv
+	./a.out
+	gtkwave dump.vcd
+
 .PHONY: check_equal
 check_equal:
 	iverilog check_equal*.sv
