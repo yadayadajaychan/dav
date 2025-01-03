@@ -1,3 +1,9 @@
+.PHONY: check_equal
+check_equal:
+	iverilog check_equal*.sv
+	./a.out
+	gtkwave dump.vcd
+
 .PHONY: seven_seg_encoder
 seven_seg_encoder:
 	iverilog seven_seg_encoder*.sv
