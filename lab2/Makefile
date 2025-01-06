@@ -1,3 +1,9 @@
+.PHONY: fsm
+fsm:
+	iverilog fsm*.sv
+	./a.out
+	gtkwave dump.vcd
+
 .PHONY: four_bit_mux
 four_bit_mux:
 	iverilog four_bit_mux*.sv
