@@ -1,6 +1,9 @@
 .PHONY: slot_machine_top
 slot_machine_top:
-	iverilog -g2005-sv slot_machine_top.sv clock_divider.sv fsm.sv lfsr.sv check_equal.sv bin_to_bcd.sv seven_seg_encoder.sv four_bit_mux.sv
+	iverilog -g2005-sv slot_machine_top*.sv clock_divider.sv fsm.sv lfsr.sv check_equal.sv bin_to_bcd.sv seven_seg_encoder.sv four_bit_mux.sv
+	./a.out
+	gtkwave dump.vcd
+
 .PHONY: fsm
 fsm:
 	iverilog fsm*.sv
