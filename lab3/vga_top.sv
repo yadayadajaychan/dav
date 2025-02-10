@@ -27,13 +27,13 @@ module vga_top (
 	reg [9:0] i;
 	always @(posedge vgaclk) begin
 		color <= test_sprite[i];
-		i = i+1;
-		if (i >= 768)
-			i = 0;
+		if (!rst || i >= 768)
+			i <= 0;
+		else
+			i <= i + 1;
 	end
 
 	always @(negedge rst) begin
-		i <= 0;
 		test_sprite[0] = BLK;
 		test_sprite[1] = BLK;
 		test_sprite[2] = BLK;
