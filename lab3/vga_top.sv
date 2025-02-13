@@ -21,20 +21,22 @@ module vga_top (
 
 	wire [9:0] hc_out;
 	wire [9:0] vc_out;
+
+	reg [9:0] x_pos;
+	reg [9:0] y_pos;
+
+	assign x_pos = hc_out/20;
+	assign y_pos = vc_out/20;
+
 	vga vga1(vgaclk, rst, color[7:5], color[4:2], color[1:0],
 		hc_out, vc_out, hsync, vsync, red, green, blue);
 
 	reg [9:0] i;
 	always @(posedge vgaclk) begin
-		color <= test_sprite[i];
-
-		if (!rst || i >= 768) begin
+		if (!rst)
 			i <= 0;
-		end else begin
-			if (hc_out < 32) begin
-				i <= i + 1;
-			end
-		end
+		else
+			color <= test_sprite[x_pos + 32 * y_pos];
 	end
 
 	always @(negedge rst) begin
