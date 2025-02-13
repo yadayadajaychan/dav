@@ -27,10 +27,14 @@ module vga_top (
 	reg [9:0] i;
 	always @(posedge vgaclk) begin
 		color <= test_sprite[i];
-		if (!rst || i >= 768)
+
+		if (!rst || i >= 768) begin
 			i <= 0;
-		else
-			i <= i + 1;
+		end else begin
+			if (hc_out < 32) begin
+				i <= i + 1;
+			end
+		end
 	end
 
 	always @(negedge rst) begin
