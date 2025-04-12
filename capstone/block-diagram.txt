@@ -5,14 +5,28 @@ skinparam componentStyle rectangle
 () "NES Controller" as controller
 [\nController Driver\n] as driver
 
+note top of driver
+	direction + reset are one-hot encoded
+	i.e. only one can be on at a time
+end note
+
 controller -> driver : latch
 controller -> driver : pulse
 controller -> driver : data
 
 [\nGame Logic\n] as game
 
+note top of game
+	grid is row-major order
+	state:
+	\t0: start
+	\t1: playing
+	\t2: win
+	\t3: lose
+end note
+
 driver -> game : [3:0] direction
-driver -> game : rst
+driver -> game : reset
 
 [\nGraphics\n] as graphics
 
