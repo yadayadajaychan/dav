@@ -1,0 +1,45 @@
+@startuml
+skinparam componentStyle rectangle
+' skinparam linetype ortho
+
+() "NES Controller" as controller
+[\nController Driver\n] as driver
+
+controller -> driver : latch
+controller -> driver : pulse
+controller -> driver : data
+
+[\nGame Logic\n] as game
+
+driver -> game : [3:0] direction
+driver -> game : rst
+
+[\nGraphics\n] as graphics
+
+game -> graphics : [3:0] grid [0:15]
+game -> graphics : [1:0] state
+
+[\nVGA Driver\n] as vga
+
+graphics -> vga : [11:0] color
+graphics <- vga : hc_out
+graphics <- vga : vc_out
+
+() "VGA Output" as vga_out
+vga -> vga_out : hsync
+vga -> vga_out : vsync
+vga -> vga_out : [11:0] color
+
+() "50 MHz Clock" as clk
+[\n60 Hz Clock Divider\n] as clk60
+[\n25 MHz Clock Divider\n] as clk25M
+
+clk -up-> clk60
+clk -up-> clk25M
+
+clk60 -up-> game : 60 Hz
+clk60 -up-> driver : 60 Hz
+clk25M -up-> graphics : 25 MHz
+clk25M -up-> vga : 25 Mhz
+
+@enduml
