@@ -1,0 +1,69 @@
+# Coordinate System
+
+entire grid is 64x64
+grid coordinate system:
++x right
++y down
+e.g. (63,63) bottom right corner
+
+blocks are 16x16
+block coordinate system:
++xi right
++yi down
+e.g. {15,15} bottom right corner
+
+grid with 16 blocks:
+```
++----+----+----+----+
+|  0 |  1 |  2 |  3 |
++----+----+----+----+
+|  4 |  5 |  6 |  7 |
++----+----+----+----+
+|  8 |  9 | 10 | 11 |
++----+----+----+----+
+| 12 | 13 | 14 | 15 |
++----+----+----+----+
+```
+
+# calculating block number from grid coordinate
+block # = x / 16 + 4 * (y / 16)
+
+e.g. (32, 16)
+by inspection, this is the upper-left corner of block 6
+block # = 32 / 16 + 4 * (16 / 16) = 2 + 4 = 6
+
+e.g. (63, 63)
+by inspection, this is the lower-right corner of block 15
+block # = 63 / 16 + 4 * (63 / 16) = 3 + 4 * 3 = 3 + 12 = 15
+
+# calculating block coordinate from grid coordinate
+xi = x % 16
+yi = y % 16
+
+e.g. (32, 16)
+by inspection, this is the upper-left corner of block 6
+xi = 32 % 16 = 0
+yi = 16 % 16 = 0
+
+e.g. (63, 63)
+by inspection, this is the lower-right corner of block 15
+xi = 63 % 16 = 15
+yi = 63 % 16 = 15
+
+# displaying correct color
+- Now that we have the block #, we can obtain the value of that block from the input
+- Use the block value and block coordinate as an index into the array of sprite bitmaps
+- The resulting value should be a 0 or a 1
+- Use this value and the block value to index into the palette array
+
+Pseudo-code:
+```
+block_number = x/16 + 4*(y/16);
+xi = x % 16;
+yi = y % 16;
+
+block_value = grid[block_number];
+bit = bitmap[block_value*256 + xi + 16*yi];
+color = palette[block_value*2 + bit];
+```
+
