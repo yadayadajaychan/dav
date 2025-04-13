@@ -7,9 +7,7 @@ module graphics(
 	input [9:0] hc,
 	input [9:0] vc,
 
-	output reg [3:0] red,
-	output reg [3:0] green,
-	output reg [3:0] blue
+	output reg [11:0] color // RGB
 );
 
 	reg bitmap [0:3071];
@@ -20,19 +18,19 @@ module graphics(
 	assign x = hc/7;
 	assign y = vc/7;
 
+	reg [3:0] xi;
+	reg [3:0] yi;
+	assign xi = x % 16;
+	assign yi = y % 16;
+
 	reg [3:0] block;
 	assign block = x/16 + y/4;
 
-	reg [3:0] value;
-	assign value = grid[block];
-
 	always @(posedge vgaclk) begin
-		if (x >= 64 || y >= 64) begin
-			red <= 0;
-			green <= 0;
-			blue <= 0;
+		if (x >= 64 || y >= 64 || block >= 16) begin
+			color <= 12'd0;
 		end else begin
-
+			color <= palette[grid[block]*2 + bitmap[grid[block]*256 + xi + yi*16]];
 		end
 	end
 
