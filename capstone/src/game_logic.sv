@@ -1,7 +1,7 @@
 module game_logic(
     input [3:0] direction,
     input rst,
-    input clk
+    input clk,
 
     output logic [3:0] grid [0:15],
     output logic [1:0] state
@@ -19,16 +19,16 @@ module game_logic(
 
                 end
                 4'b0001: begin // Right input
-                    
+
                 end
                 4'b1000: begin // Left input
-                
+
                 end
                 4'b0100: begin // Up input
-                
+
                 end
                 4'b0010: begin // Down input
-                
+
                 end
             endcase
     end
