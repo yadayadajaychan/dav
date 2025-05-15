@@ -6,8 +6,13 @@ skinparam componentStyle rectangle
 [\nController Driver\n] as driver
 
 note top of driver
-	direction + reset are one-hot encoded
-	i.e. only one can be on at a time
+	only one direction can be on at a time
+	direction:
+		\t4'b0000: no input
+		\t4'b1000: left
+		\t4'b0100: up
+		\t4'b0010: down
+		\t4'b0001: right
 end note
 
 controller -> driver : latch
@@ -25,7 +30,7 @@ note top of game
 	\t3: lose
 end note
 
-driver -> game : [3:0] direction
+driver -> game : direction [0:3]
 driver -> game : reset
 
 [\nGraphics\n] as graphics
