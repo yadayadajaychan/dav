@@ -1,7 +1,7 @@
 module game_logic(
     input [3:0] direction,
-    input rst,
-    input clk,
+    input rst, // active low
+    input clk, // 60 Hz
 
     output logic [3:0] grid [0:15],
     output logic [1:0] state
