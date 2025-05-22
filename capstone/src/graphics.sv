@@ -24,7 +24,7 @@ module graphics(
 	assign yi = y % 16;
 
 	reg [3:0] block;
-	assign block = x/16 + y/4;
+	assign block = x/16 + (y/16)*4;
 
 	always @(posedge vgaclk) begin
 		if (x >= 64 || y >= 64 || block >= 16) begin
