@@ -1,104 +1,110 @@
 module game_logic(
     input [3:0] direction,
-    input rst, // active low
-    input clk, // 60 Hz
-
-    output logic [3:0] grid [0:15],
-    output logic [1:0] state
+    input rst,
+    input clk,
+    output reg [3:0] grid [0:15],
+    output reg [1:0] state
 );
 
-    reg [3:0] transposed [0:15];   // Output transposed matrix
+    reg [3:0] matrix [0:15];  // Internal game grid (4x4 stored as 1D)
 
+    integer i;
 
- always_comb begin
-        for (int i = 0; i < 16; i++) begin
-            grid[i] = matrix[i];
-        end
-    end
+    // Shift a row to the right (no merging)
+    task shift_row_right;
+        input [3:0] base_index; // row * 4
+        reg [3:0] row[0:3];
+        reg [3:0] temp[0:3];
+        reg [3:0] result[0:3];
+        integer k, t;
 
-    // Helper task to shift a single row to the right
-    task automatic shift_row_right(input [3:0] in[4], output [3:0] out[4]);
-        reg [3:0] temp [4];
-        int idx;
         begin
-            // Clear output
-            for (int i = 0; i < 4; i++) out[i] = 0;
+            // Step 1: Read the row
+            for (k = 0; k < 4; k = k + 1)
+                row[k] = matrix[base_index + k];
 
-            // Pack non-zero values to temp from right
-            idx = 3;
-            for (int i = 3; i >= 0; i--) begin
-                if (in[i] != 0) begin
-                    temp[idx] = in[i];
-                    idx -= 1;
+            // Step 2: Shift non-zero values to the right (compact)
+            for (k = 0; k < 4; k = k + 1)
+                temp[k] = 0;
+            t = 3;
+            for (k = 3; k >= 0; k = k - 1) begin
+                if (row[k] != 0) begin
+                    temp[t] = row[k];
+                    t = t - 1;
                 end
             end
 
-            // Now merge same values
-            for (int i = 3; i > 0; i--) begin
-                if (temp[i] != 0 && temp[i] == temp[i-1]) begin
-                    temp[i] = temp[i] + 1; // Merge by adding value
-                    temp[i-1] = 0;
+            // Step 3: Merge identical adjacent tiles
+            for (k = 3; k > 0; k = k - 1) begin
+                if (temp[k] != 0 && temp[k] == temp[k-1]) begin
+                    temp[k] = temp[k] + 1;  // Merge: log2(2*val)
+                    temp[k-1] = 0;
                 end
             end
 
-            // Pack again to the right
-            idx = 3;
-            for (int i = 3; i >= 0; i--) begin
-                if (temp[i] != 0) begin
-                    out[idx] = temp[i];
-                    idx -= 1;
+            // Step 4: Shift again to remove new gaps
+            for (k = 0; k < 4; k = k + 1)
+                result[k] = 0;
+            t = 3;
+            for (k = 3; k >= 0; k = k - 1) begin
+                if (temp[k] != 0) begin
+                    result[t] = temp[k];
+                    t = t - 1;
                 end
             end
+
+            // Step 5: Write back to matrix
+            for (k = 0; k < 4; k = k + 1)
+                matrix[base_index + k] = result[k];
         end
     endtask
 
-    always_ff @ (posedge clk or negedge rst) begin
+    // Sequential logic
+    always @(posedge clk or negedge rst) begin
         if (!rst) begin
             state <= 0;
-            for (int i = 0; i < 16; i++) begin
+            for (i = 0; i < 16; i = i + 1)
                 matrix[i] <= 0;
-            end
         end else begin
             case (direction)
-                4'b0000: begin // No input
+                4'b0000: begin
                     // Do nothing
                 end
 
                 4'b0001: begin // Right
-                // Divide array index by 4. If this value is the same, it means it's in the same row
-                // If index%4 == 3 we check whether if it's 0, if 0 drop
-                // If index%4 == 2 we check if 3 is 0 if yes, move to 3 if not leave at 2
-                // If index%4 == 1 we check if 2 is 0 if yes, move to 2, then check if 3 is 0 if yes move to 3
-                // If index%4 == 0 we check if 1 is 0 if yes, move to 1, then check if 2 is 0 if yes move to 2, then check if 3 is 0 if yes move to 3
-
-                    for (int row = 0; row < 4; row++) begin
-                        reg [3:0] row_in[4], row_out[4];
-                        // Extract row
-                        for (int col = 0; col < 4; col++) begin
-                            row_in[col] = matrix[row * 4 + col];
-                        end
-                        shift_row_right(row_in, row_out);
-                        // Save back
-                        for (int col = 0; col < 4; col++) begin
-                            matrix[row * 4 + col] <= row_out[col];
-                        end
-                    end
+                    shift_row_right(0);
+                    shift_row_right(4);
+                    shift_row_right(8);
+                    shift_row_right(12);
                     state <= 1;
                 end
 
                 4'b1000: begin // Left
-                    // Similar to Right, but reverse row before and after processing
+                    // To be implemented: same as right, but reverse, shift, reverse
+                    // Reflect and perform right
                 end
 
                 4'b0100: begin // Up
-                    // You would need to extract columns and apply same logic as rows
+                    // To be implemented: column-wise processing
+                    // Transpose and Reflect and right
                 end
 
                 4'b0010: begin // Down
-                    // Same as Up but in reverse
+                    // To be implemented: column-wise processing
+                    // Transpose and right
+                end
+
+                default: begin
+                    // Handle invalid input if necessary
                 end
             endcase
         end
+    end
+
+    // Copy matrix to grid output
+    always @(posedge clk) begin
+        for (i = 0; i < 16; i = i + 1)
+            grid[i] <= matrix[i];
     end
 
 endmodule
