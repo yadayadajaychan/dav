@@ -7,7 +7,7 @@ module game_logic_tb;
     wire [1:0] state;
 	game_logic dut(direction, rst, clk, grid, state);
 
-	parameter BASE_CLK_PERIOD = 16.67; // f = 50 MHz, T = 20 ns
+	parameter BASE_CLK_PERIOD = 16; // f = 62.5 Hz, T = 16 ms
 
 	initial begin
 		rst = 1; #1
