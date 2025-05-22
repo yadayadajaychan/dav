@@ -71,4 +71,8 @@ Need to handle same tiles combining to next power of 2
 ```
 When we input left, we get [2, 2] for row 1 which would combine to [ 4 ], row 2 would be [4, 2, 4] as no neighboring equal values exist in array
 
--> Do not know if this is unfeasible
+-> Do not know if this is feasible
+
+
+## Merge
+Moving right, Check 3-4, 2-3, 1-2
